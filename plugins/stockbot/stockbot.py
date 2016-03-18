@@ -10,7 +10,7 @@ from yahoo_finance import Share
 crontable = []
 outputs = []
 
-config = yaml.load(file('rtmbot.conf', 'r'))
+config = yaml.load(open('rtmbot.conf', 'r'))
 trig_word = config["TRIGGER_WORD"].lower()
 
 def process_message(data):
@@ -26,7 +26,7 @@ def process_message(data):
     
     # Look for trigger word, remove it, and look up each word
     if trig_word == first_word:
-        print message
+        print (message)
         rest_of_message = re.sub(trig_word, '', message)
         tline=rest_of_message.split()
         if len(tline) >= 10:
@@ -36,7 +36,7 @@ def process_message(data):
                 outputs.append([data['channel'], find_quote(word)])
 
     elif "range" == first_word:
-        print message
+        print (message)
         outputs.append([data['channel'], find_range(message)])
                 
 def find_quote(word):

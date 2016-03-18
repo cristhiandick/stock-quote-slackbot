@@ -11,11 +11,10 @@ import sys
 import time
 import logging
 from argparse import ArgumentParser
-
 from slackclient import SlackClient
 
 def dbg(debug_string):
-    if debug:
+    if logging.debug:
         logging.info(debug_string)
 
 class RtmBot(object):
@@ -53,16 +52,16 @@ class RtmBot(object):
                 plugin.do(function_name, data)
     def output(self):
         for plugin in self.bot_plugins:
-            limiter = False
+ #           limiter = False
             for output in plugin.do_output():
                 channel = self.slack_client.server.channels.find(output[0])
-                if channel != None and output[1] != None:
-                    if limiter == True:
-                        time.sleep(.1)
-                        limiter = False
-                    message = output[1].encode('ascii','ignore')
-                    channel.send_message("{}".format(message))
-                    limiter = True
+ #              if channel != None and output[0] != None:
+#                    if limiter == True:
+#                        time.sleep(.1)
+#                       limiter = False
+                message = output[1].encode('ascii','ignore')
+                channel.send_message("{}".format(message))
+#                limiter = True
     def crons(self):
         for plugin in self.bot_plugins:
             plugin.do_jobs()
@@ -101,7 +100,7 @@ class Plugin(object):
     def do(self, function_name, data):
         if function_name in dir(self.module):
             #this makes the plugin fail with stack trace in debug mode
-            if not debug:
+            if not logging.debug:
                 try:
                     eval("self.module."+function_name)(data)
                 except:
@@ -140,7 +139,7 @@ class Job(object):
         return self.__str__()
     def check(self):
         if self.lastrun + self.interval < time.time():
-            if not debug:
+            if not logging.debug:
                 try:
                     self.function()
                 except:
@@ -185,14 +184,14 @@ if __name__ == "__main__":
                                 directory
                                 ))
 
-    config = yaml.load(file(args.config or 'rtmbot.conf', 'r'))
-    debug = config["DEBUG"]
+    config = yaml.load(open(args.config or 'rtmbot.conf', 'r'))
+    #debug = config["DEBUG"]
     bot = RtmBot(config["SLACK_TOKEN"])
     site_plugins = []
     files_currently_downloading = []
     job_hash = {}
 
-    if config.has_key("DAEMON"):
+    if "Daemon" in config:
         if config["DAEMON"]:
             import daemon
             with daemon.DaemonContext():
