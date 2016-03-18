@@ -32,3 +32,17 @@ Traceback (most recent call last):
     v = self._sslobj.read(len or 1024)
 ConnectionResetError: [Errno 54] Connection reset by peer
 quote vrx
+ERROR:root:OOPS
+Traceback (most recent call last):
+  File "rtmbot.py", line 161, in main_loop
+    bot.start()
+  File "rtmbot.py", line 35, in start
+    self.input(reply)
+  File "rtmbot.py", line 52, in input
+    plugin.do(function_name, data)
+  File "rtmbot.py", line 109, in do
+    eval("self.module."+function_name)(data)
+  File "/Users/cristhiandick/node/stock-quote-slackbot/plugins/stockbot/stockbot.py", line 24, in process_message
+    message = data["text"].lower()
+KeyError: 'text'
+quote
